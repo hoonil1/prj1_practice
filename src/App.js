@@ -1,8 +1,11 @@
 import React from 'react';
+import {Box} from "@chakra-ui/react";
 
 function App(props) {
   return (
-    <div></div>
+    <div>
+      <Box></Box>
+    </div>
   );
 }
 
