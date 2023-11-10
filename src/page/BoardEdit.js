@@ -20,7 +20,6 @@ import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useImmer } from "use-immer";
 import axios from "axios";
-import { logDOM } from "@testing-library/react";
 
 export function BoardEdit() {
   const [board, updateBoard] = useImmer(null);
