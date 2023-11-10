@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
 } from "@chakra-ui/react";
@@ -17,6 +18,11 @@ export function MemberSignup() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
+  let submitAvailable = true;
+
+  if (password != passwordCheck) {
+    submitAvailable = false;
+  }
   function handleSignUp() {
     axios
       .post("/api/member/signup", {
@@ -36,28 +42,34 @@ export function MemberSignup() {
         <FormLabel>ID</FormLabel>
         <Input value={id} onChange={(e) => setId(e.target.value)} />
       </FormControl>
-      <FormControl>
+      <FormControl isInvalid={password.length === 0}>
         <FormLabel>PASSWORD</FormLabel>
         <Input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <FormErrorMessage>암호를 입력해주세요.</FormErrorMessage>
       </FormControl>
-      <FormControl>
+      <FormControl isInvalid={password != passwordCheck}>
         <FormLabel>PASSWORD 확인</FormLabel>
         <Input
           type="password"
           value={passwordCheck}
           onChange={(e) => setPasswordCheck(e.target.value)}
         />
+        <FormErrorMessage>입력하신 암호와 다릅니다.</FormErrorMessage>
       </FormControl>
       <FormControl>
         <FormLabel>E-MAIL</FormLabel>
         <Input value={email} onChange={(e) => setEmail(e.target.value)} />
       </FormControl>
       <Flex gap={10}>
-        <Button onClick={handleSignUp} colorScheme="blue">
+        <Button
+          onClick={handleSignUp}
+          colorScheme="blue"
+          isDisabled={!submitAvailable}
+        >
           SIGN UP
         </Button>
         <Button onClick={() => navigate(-1)}>취소</Button>
