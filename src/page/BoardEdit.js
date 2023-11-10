@@ -42,28 +42,26 @@ export function BoardEdit() {
       status: "loading",
       duration: 1000,
     });
-    axios
-      .put("/api/board/edit", board)
-      .then(() =>
+    axios.put("/api/board/edit", board).then(() =>
+      toast({
+        description: { id } + "번 게시물이 수정되었습니다",
+        status: "success",
+      }),
+    );
+    navigate("/board/" + id).catch((error) => {
+      console.log(error.response.status);
+      if (error.response.status === 400) {
         toast({
-          description: "수정되었습니다",
-          status: "success",
-        }),
-      )
-      .catch((error) => {
-        console.log(error.response.status);
-        if (error.response.status === 400) {
-          toast({
-            description: "작성한 내용을 확인해주세요.",
-            status: "error",
-          });
-        } else {
-          toast({
-            description: "저장 중에 문제가 발생하였습니다.",
-            status: "error",
-          });
-        }
-      });
+          description: "요청이 잘못되었습니다.",
+          status: "error",
+        });
+      } else {
+        toast({
+          description: "수정 중에 문제가 발생하였습니다.",
+          status: "error",
+        });
+      }
+    });
   }
 
   return (
@@ -103,7 +101,11 @@ export function BoardEdit() {
         />
       </FormControl>
       <Flex gap={7}>
-        <Button colorScheme="facebook" onClick={handleEditButton}>
+        <Button
+          colorScheme="facebook"
+          onClick={handleEditButton}
+          disabled={editting}
+        >
           수정
         </Button>
         <Button onClick={() => navigate(-1)}>취소</Button>
