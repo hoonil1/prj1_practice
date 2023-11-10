@@ -7,8 +7,9 @@ import {
   Input,
   Spinner,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useImmer } from "use-immer";
 import axios from "axios";
@@ -16,6 +17,8 @@ import axios from "axios";
 export function BoardEdit() {
   const [board, updateBoard] = useImmer(null);
   const navigate = useNavigate();
+  const toast = useToast();
+  const [editting, setEditting] = useState(false);
 
   // /edit/:id
   const { id } = useParams();
@@ -33,11 +36,34 @@ export function BoardEdit() {
   function handleEditButton() {
     // 수정버튼 클릭시
     // PUT 방식 /api/board/edit
+    setEditting(true);
+    toast({
+      description: "수정중입니다...",
+      status: "loading",
+      duration: 1000,
+    });
     axios
       .put("/api/board/edit", board)
-      .then(() => console.log("잘됨"))
-      .catch(() => console.log("안됨"))
-      .finally(() => console.log("수정버튼 클릭 잘됨"));
+      .then(() =>
+        toast({
+          description: "수정되었습니다",
+          status: "success",
+        }),
+      )
+      .catch((error) => {
+        console.log(error.response.status);
+        if (error.response.status === 400) {
+          toast({
+            description: "작성한 내용을 확인해주세요.",
+            status: "error",
+          });
+        } else {
+          toast({
+            description: "저장 중에 문제가 발생하였습니다.",
+            status: "error",
+          });
+        }
+      });
   }
 
   return (
