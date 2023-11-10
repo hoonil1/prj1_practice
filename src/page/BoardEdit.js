@@ -9,12 +9,13 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useImmer } from "use-immer";
 import axios from "axios";
 
 export function BoardEdit() {
   const [board, updateBoard] = useImmer(null);
+  const navigate = useNavigate();
 
   // /edit/:id
   const { id } = useParams();
@@ -66,8 +67,8 @@ export function BoardEdit() {
         />
       </FormControl>
       <Flex gap={7}>
-        <Button>수정</Button>
-        <Button>삭제</Button>
+        <Button colorScheme="facebook">수정</Button>
+        <Button onClick={() => navigate(-1)}>취소</Button>
       </Flex>
     </Box>
   );
