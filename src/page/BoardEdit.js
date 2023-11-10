@@ -30,6 +30,16 @@ export function BoardEdit() {
     return <Spinner />;
   }
 
+  function handleEditButton() {
+    // 수정버튼 클릭시
+    // PUT 방식 /api/board/edit
+    axios
+      .put("/api/board/edit", board)
+      .then(() => console.log("잘됨"))
+      .catch(() => console.log("안됨"))
+      .finally(() => console.log("수정버튼 클릭 잘됨"));
+  }
+
   return (
     <Box>
       <h1>{id} 번 글 수정</h1>
@@ -67,7 +77,9 @@ export function BoardEdit() {
         />
       </FormControl>
       <Flex gap={7}>
-        <Button colorScheme="facebook">수정</Button>
+        <Button colorScheme="facebook" onClick={handleEditButton}>
+          수정
+        </Button>
         <Button onClick={() => navigate(-1)}>취소</Button>
       </Flex>
     </Box>
