@@ -40,7 +40,7 @@ export function BoardView() {
 
   function handleDelete() {
     axios
-      .delete("/api/board/remove" + id)
+      .delete("/api/board/remove/" + id)
       .then((response) => {
         toast({
           description: id + " 번 게시물 삭제완료",
@@ -48,7 +48,7 @@ export function BoardView() {
         });
         navigate("/");
       })
-      .catch((error) => {
+      .catch(() => {
         toast({
           description: "삭제중 문제가 발생",
           status: "error",
@@ -76,7 +76,9 @@ export function BoardView() {
         <FormLabel>작성일시</FormLabel>
         <Input value={board.inserted} readOnly />
       </FormControl>
-      <Button colorScheme="facebook">수정</Button>
+      <Button colorScheme="facebook" onClick={() => navigate("/edit/" + id)}>
+        수정
+      </Button>
       <Button colorScheme="red" onClick={onOpen}>
         삭제
       </Button>
