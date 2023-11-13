@@ -15,9 +15,9 @@ import {
 export function MemberEdit() {
   const [member, setMember] = useState(null);
   const [email, setEmail] = useState("");
-  const [emailAvailable, setEmailAvailable] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
+  const [emailAvailable, setEmailAvailable] = useState(false);
 
   const toast = useToast();
   const [params] = useSearchParams();
@@ -40,13 +40,14 @@ export function MemberEdit() {
 
   let emailChecked = sameOriginEmail || emailAvailable;
 
-  // 암호를 안쓰면 기존 암호 사용
-  // 암호를 쓰면 새 암호, 새 암호 확인  체크
+  // 암호가 없으면 기존 암호
+  // 암호를 작성하면 새 암호, 암호확인 체크
   let passwordChecked = false;
 
-  if (passwordChecked === password) {
+  if (passwordCheck === password) {
     passwordChecked = true;
   }
+
   if (password.length === 0) {
     passwordChecked = true;
   }
@@ -77,6 +78,14 @@ export function MemberEdit() {
           });
         }
       });
+  }
+
+  function handleSubmit() {
+    axios.put("/api/member/edit", {
+      id: member.id,
+      password,
+      email,
+    });
   }
 
   return (
@@ -120,7 +129,13 @@ export function MemberEdit() {
           </Button>
         </Flex>
       </FormControl>
-      <Button isDisabled={!emailChecked || !passwordChecked}>수정</Button>
+      <Button
+        isDisabled={!emailChecked || !passwordChecked}
+        colorScheme="blue"
+        onClick={handleSubmit}
+      >
+        수정
+      </Button>
     </Box>
   );
 }
