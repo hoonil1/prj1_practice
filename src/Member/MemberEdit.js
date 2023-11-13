@@ -6,6 +6,7 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Modal,
@@ -24,6 +25,7 @@ export function MemberEdit() {
   const [member, setMember] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nickName, setNickName] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [emailAvailable, setEmailAvailable] = useState(false);
 
@@ -96,13 +98,13 @@ export function MemberEdit() {
     // {id, password, email}
 
     axios
-      .put("/api/member/edit", { id: member.id, password, email })
+      .put("/api/member/edit", { id: member.id, password, email, nickName })
       .then(() => {
         toast({
           description: "회원정보가 수정되었습니다.",
           status: "success",
         });
-        navigate("/member?" + params.toString());
+        navigate("/member/list");
       })
       .catch((error) => {
         if (error.response.status === 401 || error.response.status === 403) {
@@ -124,6 +126,14 @@ export function MemberEdit() {
     <Box>
       <h1>{id}님 정보 수정</h1>
       <FormControl>
+        <FormControl>
+          <FormLabel>nickname</FormLabel>
+          <Input
+            type="text"
+            value={nickName}
+            onChange={(e) => setNickName(e.target.value)}
+          />
+        </FormControl>
         <FormLabel>password</FormLabel>
         <Input
           type="text"

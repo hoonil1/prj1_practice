@@ -17,9 +17,11 @@ export function MemberSignup() {
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [email, setEmail] = useState("");
+  const [nickName, setNickName] = useState("");
 
   const [idAvailable, setIdAvailable] = useState(false);
   const [emailAvailable, setEmailAvailable] = useState(false);
+  const [nickNameAvailable, setNickNameAvailable] = useState(false);
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -37,6 +39,9 @@ export function MemberSignup() {
   if (password != passwordCheck) {
     submitAvailable = false;
   }
+  if (!nickNameAvailable) {
+    submitAvailable = false;
+  }
 
   if (password.length === 0) {
     submitAvailable = false;
@@ -48,10 +53,8 @@ export function MemberSignup() {
         id,
         password,
         email,
+        nickName,
       })
-      .then(() => console.log("good"))
-      .catch(() => console.log("bad"))
-      .finally(() => console.log("done"))
       .then(() => {
         // toast
         // navigate
@@ -125,6 +128,30 @@ export function MemberSignup() {
       });
   }
 
+  function handleNicknameCheck() {
+    const params = new URLSearchParams();
+    params.set("nickName", nickName);
+
+    axios
+      .get("/api/member/check?" + params.toString())
+      .then(() => {
+        setNickNameAvailable(false);
+        toast({
+          description: "이미 사용중인 닉네임입니다.",
+          status: "warning",
+        });
+      })
+      .catch((error) => {
+        if (error.response.status === 404) {
+          setNickNameAvailable(true);
+          toast({
+            description: "사용 가능한 닉네임입니다",
+            statue: "success",
+          });
+        }
+      });
+  }
+
   return (
     <Box>
       <h1>회원 가입</h1>
@@ -149,7 +176,6 @@ export function MemberSignup() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
         <FormErrorMessage>암호를 입력해 주세요.</FormErrorMessage>
       </FormControl>
       <FormControl isInvalid={password != passwordCheck}>
@@ -161,6 +187,23 @@ export function MemberSignup() {
         />
         <FormErrorMessage>암호가 다릅니다.</FormErrorMessage>
       </FormControl>
+
+      <FormControl isInvalid={!nickName}>
+        <FormLabel>nickname</FormLabel>
+        <Flex>
+          <Input
+            type="nickName"
+            value={nickName}
+            onChange={(e) => {
+              setNickName(e.target.value);
+              setNickNameAvailable(false);
+            }}
+          />
+          <Button onClick={handleNicknameCheck}>중복체크</Button>
+        </Flex>
+        <FormErrorMessage>nickname 중복체크를 해주세요</FormErrorMessage>
+      </FormControl>
+
       <FormControl isInvalid={!emailAvailable}>
         <FormLabel>email</FormLabel>
         <Flex>
