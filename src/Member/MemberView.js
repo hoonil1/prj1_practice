@@ -32,7 +32,14 @@ export function MemberView() {
   useEffect(() => {
     axios
       .get("/api/member?" + params.toString())
-      .then((response) => setMember(response.data));
+      .then((response) => setMember(response.data))
+      .catch(
+        (error) => navitage("/login"),
+        toast({
+          description: "권한X",
+          status: "warning",
+        }),
+      );
   }, []);
 
   if (member === null) {
