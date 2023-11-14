@@ -33,13 +33,13 @@ export function MemberView() {
     axios
       .get("/api/member?" + params.toString())
       .then((response) => setMember(response.data))
-      .catch(
-        (error) => navitage("/login"),
+      .catch((error) => {
+        navigate("/login");
         toast({
           description: "권한X",
           status: "warning",
-        }),
-      );
+        });
+      });
   }, []);
 
   if (member === null) {
