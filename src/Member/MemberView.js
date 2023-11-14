@@ -36,7 +36,7 @@ export function MemberView() {
       .catch((error) => {
         navigate("/login");
         toast({
-          description: "권한X",
+          description: "권한이 없습니다.",
           status: "warning",
         });
       });
@@ -84,12 +84,12 @@ export function MemberView() {
     <Box>
       <h1>{member.id}님 정보</h1>
       <FormControl>
-        <FormLabel>nickname</FormLabel>
-        <Input type="text" value={member.nickName} readOnly />
-      </FormControl>
-      <FormControl>
         <FormLabel>password</FormLabel>
         <Input type="text" value={member.password} readOnly />
+      </FormControl>
+      <FormControl>
+        <FormLabel>별명</FormLabel>
+        <Input value={member.nickName} readOnly></Input>
       </FormControl>
       <FormControl>
         <FormLabel>email</FormLabel>
