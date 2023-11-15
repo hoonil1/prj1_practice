@@ -6,13 +6,23 @@ import {
   CardHeader,
   Flex,
   Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   StackDivider,
   Text,
   Textarea,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
 function CommentForm({ boardId, isSubmitting, onSubmit }) {
   const [comment, setComment] = useState("");
@@ -32,27 +42,81 @@ function CommentForm({ boardId, isSubmitting, onSubmit }) {
 }
 
 function CommentList({ commentList }) {
+  const { id } = useParams();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  function handleDelete() {
+    axios
+      .delete("/api/comment/remove/" + id)
+      .then((response) => {
+        toast({
+          description: id + "번 게시물이 삭제되었습니다.",
+          status: "success",
+        });
+        navigate("/");
+      })
+      .catch((error) => {
+        toast({
+          description: "삭제 중 문제가 발생하였습니다.",
+          status: "error",
+        });
+      })
+      .finally(() => onClose());
+  }
+
+  function handleEdit() {}
+
   return (
-    <Card>
-      <CardHeader>
-        <Heading size="md">댓글 리스트</Heading>
-      </CardHeader>
-      <CardBody>
-        <Stack divider={<StackDivider />} spacing="4">
-          {commentList.map((comment) => (
-            <Box>
-              <Flex justifyContent="space-between">
-                <Heading size="xs">{comment.memberId}</Heading>
-                <Text fontSize="xs">{comment.inserted}</Text>
-              </Flex>
-              <Text sx={{ whiteSpace: "pre-wrap" }} pt="2" fontSize="sm">
-                {comment.comment}
-              </Text>
-            </Box>
-          ))}
-        </Stack>
-      </CardBody>
-    </Card>
+    <div>
+      <Card>
+        <CardHeader>
+          <Heading size="md">댓글 리스트</Heading>
+        </CardHeader>
+        <CardBody>
+          <Stack divider={<StackDivider />} spacing="4">
+            {commentList.map((comment) => (
+              <Box>
+                <Flex justifyContent="space-between">
+                  <Heading size="xs">{comment.memberId}</Heading>
+                  <Text fontSize="xs">{comment.inserted}</Text>
+                  <Box>
+                    <Button colorScheme="facebook" onClick={handleEdit}>
+                      수정
+                    </Button>
+                    <Button colorScheme="red" onClick={onOpen}>
+                      삭제
+                    </Button>
+                  </Box>
+                </Flex>
+
+                <Text sx={{ whiteSpace: "pre-wrap" }} pt="2" fontSize="sm">
+                  {comment.comment}
+                </Text>
+              </Box>
+            ))}
+          </Stack>
+        </CardBody>
+      </Card>
+      <div>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>삭제 확인</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>삭제 하시겠습니까?</ModalBody>
+
+            <ModalFooter>
+              <Button onClick={onClose}>닫기</Button>
+              <Button onClick={handleDelete} colorScheme="red">
+                삭제
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </div>
+    </div>
   );
 }
 
