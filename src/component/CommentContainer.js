@@ -6,14 +6,23 @@ import {
   CardHeader,
   Flex,
   Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   StackDivider,
   Text,
   Textarea,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { LoginContext } from "./LoginProvider";
 
 function CommentForm({ boardId, isSubmitting, onSubmit }) {
   const [comment, setComment] = useState("");
@@ -32,7 +41,8 @@ function CommentForm({ boardId, isSubmitting, onSubmit }) {
   );
 }
 
-function CommentList({ commentList, onDelete, isSubmitting }) {
+function CommentList({ commentList, onDeleteModalOpen, isSubmitting }) {
+  const { hasAccess } = useContext(LoginContext);
   return (
     <Card>
       <CardHeader>
@@ -50,14 +60,17 @@ function CommentList({ commentList, onDelete, isSubmitting }) {
                 <Text sx={{ whiteSpace: "pre-wrap" }} pt="2" fontSize="sm">
                   {comment.comment}
                 </Text>
-                <Button
-                  isDisabled={isSubmitting}
-                  onClick={() => onDelete(comment.id)}
-                  size="xs"
-                  colorScheme="red"
-                >
-                  <DeleteIcon />
-                </Button>
+
+                {hasAccess(comment.memberId) && (
+                  <Button
+                    isDisabled={isSubmitting}
+                    onClick={() => onDeleteModalOpen(comment.id)}
+                    size="xs"
+                    colorScheme="red"
+                  >
+                    <DeleteIcon />
+                  </Button>
+                )}
               </Flex>
             </Box>
           ))}
@@ -71,6 +84,11 @@ export function CommentContainer({ boardId }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [commentList, setCommentList] = useState([]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [id, setId] = useState(0);
+
+  const { isAuthenticated } = useContext(LoginContext);
 
   useEffect(() => {
     if (!isSubmitting) {
@@ -91,27 +109,56 @@ export function CommentContainer({ boardId }) {
       .finally(() => setIsSubmitting(false));
   }
 
-  function handleDelete(id) {
+  function handleDelete() {
     // console.log(id + "번 댓글 삭제");
     // TODO: 모달, then, catch, finally
 
     setIsSubmitting(true);
-    axios.delete("/api/comment/" + id).finally(() => setIsSubmitting(false));
+    axios.delete("/api/comment/" + id).finally(() => {
+      setIsSubmitting(false);
+      onClose();
+    });
   }
 
+  function handleDeleteModalOpen(id) {
+    // id 를 어딘가에 저장
+    setId(id);
+    // 모달 열기
+    onOpen();
+  }
   return (
     <Box>
-      <CommentForm
-        boardId={boardId}
-        isSubmitting={isSubmitting}
-        onSubmit={handleSubmit}
-      />
+      {isAuthenticated() && (
+        <CommentForm
+          boardId={boardId}
+          isSubmitting={isSubmitting}
+          onSubmit={handleSubmit}
+        />
+      )}
+
       <CommentList
         boardId={boardId}
         isSubmitting={isSubmitting}
         commentList={commentList}
-        onDelete={handleDelete}
+        onDeleteModalOpen={handleDeleteModalOpen}
       />
+
+      {/* 삭제 모달 */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>삭제 확인</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>삭제 하시겠습니까?</ModalBody>
+
+          <ModalFooter>
+            <Button onClick={onClose}>닫기</Button>
+            <Button onClick={handleDelete} colorScheme="red">
+              삭제
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
