@@ -26,6 +26,7 @@ export function BoardList() {
   if (boardList === null) {
     return <Spinner />;
   }
+
   return (
     <Box>
       <h1>게시물 목록</h1>
