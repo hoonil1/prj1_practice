@@ -22,28 +22,72 @@ import {
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { CheckIcon, CloseIcon, DeleteIcon } from "@chakra-ui/icons";
 import { LoginContext } from "./LoginProvider";
+import { useNavigate } from "react-router-dom";
 
 function CommentForm({ boardId, isSubmitting, onSubmit }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [comment, setComment] = useState("");
+  const toast = useToast();
+  const navigate = useNavigate();
 
   function handleSubmit() {
-    onSubmit({ boardId, comment });
+    // onSubmit({ boardId, comment });
+    axios
+      .post("/api/comment/add", {
+        boardId,
+        comment,
+      })
+      .then(() => {
+        toast({
+          description: "작성완료",
+          status: "success",
+        });
+      })
+      .catch(() => {
+        toast({
+          description: "작성불가",
+          status: "error",
+        });
+      })
+      .finally(() => {
+        onClose();
+        navigate(0);
+      });
   }
 
   return (
     <Box>
       <Textarea value={comment} onChange={(e) => setComment(e.target.value)} />
-      <Button isDisabled={isSubmitting} onClick={handleSubmit}>
+      <Button isDisabled={isSubmitting} onClick={onOpen}>
         쓰기
       </Button>
+      {/* 삭제 모달 */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>댓글 작성</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>작성 하시겠습니까?</ModalBody>
+
+          <ModalFooter>
+            <Button onClick={onClose}>
+              <CloseIcon />
+            </Button>
+            <Button onClick={handleSubmit} colorScheme="blue">
+              <CheckIcon />
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
 
 function CommentList({ commentList, onDeleteModalOpen, isSubmitting }) {
   const { hasAccess } = useContext(LoginContext);
+
   return (
     <Card>
       <CardHeader>
@@ -87,6 +131,8 @@ export function CommentContainer({ boardId }) {
   const [commentList, setCommentList] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+
   const toast = useToast();
   // const [id, setId] = useState(0);
 
@@ -110,12 +156,14 @@ export function CommentContainer({ boardId }) {
 
     axios
       .post("/api/comment/add", comment)
-      .then(() =>
+      .then(() => {
         toast({
           description: "댓글이 등록되었습니다",
           status: "success",
-        }),
-      )
+        });
+        navigate("/");
+      })
+
       .catch((error) => {
         toast({
           description: "댓글 등록중 문제가 발생하였습니다",
@@ -142,7 +190,7 @@ export function CommentContainer({ boardId }) {
           status: "success",
         }),
       )
-      .catch(() => {
+      .catch((error) => {
         if (error.response.status === 401 || error.response.status === 403) {
           toast({
             description: "권한이 없습니다",
