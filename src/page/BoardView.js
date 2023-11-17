@@ -4,8 +4,10 @@ import axios from "axios";
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
+  Heading,
   Input,
   Modal,
   ModalBody,
@@ -21,6 +23,20 @@ import {
 } from "@chakra-ui/react";
 import { LoginContext } from "../component/LoginProvider";
 import { CommentContainer } from "../component/CommentContainer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import * as PropTypes from "prop-types";
+
+function LikeContainer({ like, onClick }) {
+  if (like === null) {
+    return <Spinner />;
+  }
+  return (
+    <Button variant="ghost" size="xl" onClick={onClick}>
+      <FontAwesomeIcon icon={faHeart} size="xl" />
+    </Button>
+  );
+}
 
 export function BoardView() {
   const [board, setBoard] = useState(null);
@@ -28,6 +44,7 @@ export function BoardView() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const navigate = useNavigate();
+  const [like, setLike] = useState(null);
 
   const { id } = useParams();
 
@@ -37,6 +54,11 @@ export function BoardView() {
     axios
       .get("/api/board/id/" + id)
       .then((response) => setBoard(response.data));
+  }, []);
+  useEffect(() => {
+    axios
+      .get("/api/like/board/" + id)
+      .then((response) => setLike(response.data));
   }, []);
 
   if (board === null) {
@@ -62,9 +84,20 @@ export function BoardView() {
       .finally(() => onClose());
   }
 
+  function handleLike() {
+    axios
+      .post("/api/like", { boardId: board.id })
+      .then((response) => setLike(response.data))
+      .catch(() => console.log("bad"))
+      .finally(() => console.log("done"));
+  }
+
   return (
     <Box>
-      <h1>{board.id}번 글 보기</h1>
+      <Flex justifyContent="space-between">
+        <Heading size="xl">{board.id}번 글 보기</Heading>
+        <LikeContainer like={like} onClick={handleLike} />
+      </Flex>
       <FormControl>
         <FormLabel>제목</FormLabel>
         <Input value={board.title} readOnly />

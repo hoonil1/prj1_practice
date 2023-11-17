@@ -155,7 +155,7 @@ function CommentList({
   isSubmitting,
   setIsSubmitting,
 }) {
-  const { hasAccess } = useContext(LoginContext);
+  // const { hasAccess } = useContext(LoginContext);
 
   return (
     <Card>

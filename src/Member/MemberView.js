@@ -61,8 +61,6 @@ export function MemberView() {
           status: "success",
         });
         navigate("/");
-
-        // fetchLogin();
       })
       .catch((error) => {
         if (error.response.status === 401 || error.response.status === 403) {
