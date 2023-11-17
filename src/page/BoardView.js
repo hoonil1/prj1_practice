@@ -17,6 +17,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  Text,
   Textarea,
   useDisclosure,
   useToast,
@@ -24,17 +25,22 @@ import {
 import { LoginContext } from "../component/LoginProvider";
 import { CommentContainer } from "../component/CommentContainer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
-import * as PropTypes from "prop-types";
+import { faThumbsUp as emptyLike } from "@fortawesome/free-regular-svg-icons";
+import { faThumbsUp as fullLike } from "@fortawesome/free-solid-svg-icons";
 
 function LikeContainer({ like, onClick }) {
   if (like === null) {
     return <Spinner />;
   }
   return (
-    <Button variant="ghost" size="xl" onClick={onClick}>
-      <FontAwesomeIcon icon={faHeart} size="xl" />
-    </Button>
+    <Flex gap={2}>
+      <Button variant="ghost" size="xl" onClick={onClick}>
+        {/*<FontAwesomeIcon icon={faHeart} size="xl" />*/}
+        {like.like && <FontAwesomeIcon icon={fullLike} size="2xl" />}
+        {like.like || <FontAwesomeIcon icon={emptyLike} size="2xl" />}
+        <Heading size="2xl">{like.countLike}</Heading>
+      </Button>
+    </Flex>
   );
 }
 
