@@ -17,40 +17,44 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Text,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faThumbsUp as emptyHeart } from "@fortawesome/free-regular-svg-icons";
+import { faThumbsUp as fullHeart } from "@fortawesome/free-solid-svg-icons";
 import { LoginContext } from "../component/LoginProvider";
 import { CommentContainer } from "../component/CommentContainer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp as emptyLike } from "@fortawesome/free-regular-svg-icons";
-import { faThumbsUp as fullLike } from "@fortawesome/free-solid-svg-icons";
 
 function LikeContainer({ like, onClick }) {
+  const { isAuthenticated } = useContext(LoginContext);
+
   if (like === null) {
     return <Spinner />;
   }
+
   return (
     <Flex gap={2}>
-      <Button variant="ghost" size="xl" onClick={onClick}>
-        {/*<FontAwesomeIcon icon={faHeart} size="xl" />*/}
-        {like.like && <FontAwesomeIcon icon={fullLike} size="2xl" />}
-        {like.like || <FontAwesomeIcon icon={emptyLike} size="2xl" />}
-        <Heading size="2xl">{like.countLike}</Heading>
-      </Button>
+      <Tooltip isDisabled={isAuthenticated()} hasArrow label={"로그인 하세요."}>
+        <Button variant="ghost" size="xl" onClick={onClick}>
+          {like.like && <FontAwesomeIcon icon={fullHeart} size="xl" />}
+          {like.like || <FontAwesomeIcon icon={emptyHeart} size="xl" />}
+        </Button>
+      </Tooltip>
+      <Heading size="lg">{like.countLike}</Heading>
     </Flex>
   );
 }
 
 export function BoardView() {
   const [board, setBoard] = useState(null);
+  const [like, setLike] = useState(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const navigate = useNavigate();
-  const [like, setLike] = useState(null);
 
   const { id } = useParams();
 
@@ -61,6 +65,7 @@ export function BoardView() {
       .get("/api/board/id/" + id)
       .then((response) => setBoard(response.data));
   }, []);
+
   useEffect(() => {
     axios
       .get("/api/like/board/" + id)
