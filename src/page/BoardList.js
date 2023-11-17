@@ -15,11 +15,47 @@ import axios from "axios";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ChatIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronLeft,
+  faChevronRight,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
+
+function Pagination({ pageInfo }) {
+  const pageNumbers = [];
+
+  const navigate = useNavigate();
+
+  for (let i = pageInfo.startPageNumber; i <= pageInfo.endPageNumber; i++) {
+    pageNumbers.push(i);
+  }
+
+  return (
+    <Box>
+      {pageInfo.prevPageNumber && (
+        <Button onClick={() => navigate("/?p=" + pageInfo.prevPageNumber)}>
+          <FontAwesomeIcon icon={faChevronLeft} />
+        </Button>
+      )}
+      {pageNumbers.map((pageNumber) => (
+        <Button key={pageNumber} onClick={() => navigate("/?p=" + pageNumber)}>
+          {pageNumber}
+        </Button>
+      ))}
+
+      {pageInfo.nextPageNumber && (
+        <Button onClick={() => navigate("/?p=" + pageInfo.nextPageNumber)}>
+          <FontAwesomeIcon icon={faChevronRight} />
+        </Button>
+      )}
+    </Box>
+  );
+}
 
 export function BoardList() {
   const [boardList, setBoardList] = useState(null);
   const [pageInfo, setPageInfo] = useState(null);
+
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -79,18 +115,7 @@ export function BoardList() {
         </Table>
       </Box>
 
-      <Box>
-        <Button onClick={() => navigate("/?p=1")}>1</Button>
-        <Button onClick={() => navigate("/?p=2")}>2</Button>
-        <Button onClick={() => navigate("/?p=3")}>3</Button>
-        <Button onClick={() => navigate("/?p=4")}>4</Button>
-        <Button onClick={() => navigate("/?p=5")}>5</Button>
-        <Button onClick={() => navigate("/?p=6")}>6</Button>
-        <Button onClick={() => navigate("/?p=7")}>7</Button>
-        <Button onClick={() => navigate("/?p=8")}>8</Button>
-        <Button onClick={() => navigate("/?p=9")}>9</Button>
-        <Button onClick={() => navigate("/?p=10")}>10</Button>
-      </Box>
+      <Pagination pageInfo={pageInfo} />
     </Box>
   );
 }
