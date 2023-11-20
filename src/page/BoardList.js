@@ -51,12 +51,9 @@ function Pagination({ pageInfo }) {
   return (
     <Box>
       {pageInfo.prevPageNumber && (
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/?p=" + pageInfo.prevPageNumber)}
-        >
+        <PageButton variant="ghost" pageNumber={pageInfo.prevPageNumber}>
           <FontAwesomeIcon icon={faChevronLeft} />
-        </Button>
+        </PageButton>
       )}
       {pageNumbers.map((pageNumber) => (
         <PageButton
@@ -71,12 +68,9 @@ function Pagination({ pageInfo }) {
       ))}
 
       {pageInfo.nextPageNumber && (
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/?p=" + pageInfo.nextPageNumber)}
-        >
+        <PageButton variant="ghost" pageNumber={pageInfo.nextPageNumber}>
           <FontAwesomeIcon icon={faChevronRight} />
-        </Button>
+        </PageButton>
       )}
     </Box>
   );
@@ -146,7 +140,7 @@ export function BoardList() {
                 onClick={() => navigate("/board/" + board.id)}
               >
                 <Td>{board.id}</Td>
-                <Td>{board.countLike != 0 && board.countLike}</Td>
+                <Td>{board.countLike !== 0 && board.countLike}</Td>
                 <Td>
                   {board.title}
                   {board.countComment > 0 && (
