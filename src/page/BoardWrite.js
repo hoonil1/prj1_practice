@@ -16,7 +16,7 @@ export function BoardWrite() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [files, setFiles] = useState(null);
+  const [uploadFiles, setUploadFiles] = useState(null);
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export function BoardWrite() {
       .postForm("/api/board/add", {
         title,
         content,
-        files,
+        uploadFiles,
       })
       .then(() => {
         toast({
@@ -74,7 +74,7 @@ export function BoardWrite() {
             type="file"
             accept="image/*"
             multiple
-            onChange={(e) => setFiles(e.target.files)}
+            onChange={(e) => setUploadFiles(e.target.files)}
           />
           <FormHelperText>1MB이내 파일만 가능, 총 50MB 첨부가능</FormHelperText>
         </FormControl>
