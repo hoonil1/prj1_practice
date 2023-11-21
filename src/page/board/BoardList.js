@@ -5,6 +5,7 @@ import {
   Button,
   Flex,
   Input,
+  Select,
   Spinner,
   Table,
   Tbody,
@@ -18,11 +19,11 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ChatIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faChevronLeft,
-  faChevronRight,
+  faAngleLeft,
+  faAngleRight,
   faHeart,
-  faImage,
 } from "@fortawesome/free-solid-svg-icons";
+import { faImages } from "@fortawesome/free-regular-svg-icons";
 
 function PageButton({ variant, pageNumber, children }) {
   const [params] = useSearchParams();
@@ -43,7 +44,7 @@ function PageButton({ variant, pageNumber, children }) {
 function Pagination({ pageInfo }) {
   const pageNumbers = [];
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   for (let i = pageInfo.startPageNumber; i <= pageInfo.endPageNumber; i++) {
     pageNumbers.push(i);
@@ -53,9 +54,10 @@ function Pagination({ pageInfo }) {
     <Box>
       {pageInfo.prevPageNumber && (
         <PageButton variant="ghost" pageNumber={pageInfo.prevPageNumber}>
-          <FontAwesomeIcon icon={faChevronLeft} />
+          <FontAwesomeIcon icon={faAngleLeft} />
         </PageButton>
       )}
+
       {pageNumbers.map((pageNumber) => (
         <PageButton
           key={pageNumber}
@@ -70,7 +72,7 @@ function Pagination({ pageInfo }) {
 
       {pageInfo.nextPageNumber && (
         <PageButton variant="ghost" pageNumber={pageInfo.nextPageNumber}>
-          <FontAwesomeIcon icon={faChevronRight} />
+          <FontAwesomeIcon icon={faAngleRight} />
         </PageButton>
       )}
     </Box>
@@ -79,17 +81,27 @@ function Pagination({ pageInfo }) {
 
 function SearchComponent() {
   const [keyword, setKeyword] = useState("");
+  const [category, setCategory] = useState("all");
   const navigate = useNavigate();
 
   function handleSearch() {
+    // /?k=keyword&c=all
     const params = new URLSearchParams();
     params.set("k", keyword);
+    params.set("c", category);
 
     navigate("/?" + params);
   }
 
   return (
     <Flex>
+      <Select onChange={(e) => setCategory(e.target.value)}>
+        <option selected value="all">
+          전체
+        </option>
+        <option value="title">제목</option>
+        <option value="content">본문</option>
+      </Select>
       <Input value={keyword} onChange={(e) => setKeyword(e.target.value)} />
       <Button onClick={handleSearch}>검색</Button>
     </Flex>
@@ -141,7 +153,7 @@ export function BoardList() {
                 onClick={() => navigate("/board/" + board.id)}
               >
                 <Td>{board.id}</Td>
-                <Td>{board.countLike !== 0 && board.countLike}</Td>
+                <Td>{board.countLike != 0 && board.countLike}</Td>
                 <Td>
                   {board.title}
                   {board.countComment > 0 && (
@@ -152,7 +164,7 @@ export function BoardList() {
                   )}
                   {board.countFile > 0 && (
                     <Badge>
-                      <FontAwesomeIcon icon={faImage} />
+                      <FontAwesomeIcon icon={faImages} />
                       {board.countFile}
                     </Badge>
                   )}
@@ -164,8 +176,8 @@ export function BoardList() {
           </Tbody>
         </Table>
       </Box>
-      <SearchComponent />
 
+      <SearchComponent />
       <Pagination pageInfo={pageInfo} />
     </Box>
   );

@@ -1,15 +1,18 @@
-import { Button, Flex, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, useToast } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useContext, useEffect } from "react";
-import { LoginContext } from "./LoginProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHouse,
-  faList,
+  faPen,
+  faRightFromBracket,
+  faRightToBracket,
+  faUser,
   faUserPlus,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
+import { LoginContext } from "./LoginProvider";
 
 export function NavBar() {
   const { fetchLogin, login, isAuthenticated, isAdmin } =
@@ -21,6 +24,7 @@ export function NavBar() {
   const urlParams = new URLSearchParams();
 
   const location = useLocation();
+
   useEffect(() => {
     fetchLogin();
   }, [location]);
@@ -41,12 +45,17 @@ export function NavBar() {
 
   return (
     <Flex>
+      {isAuthenticated() && <Box>{login.nickName} 님</Box>}
+
       <Button onClick={() => navigate("/")}>
         <FontAwesomeIcon icon={faHouse} />
         home
       </Button>
       {isAuthenticated() && (
-        <Button onClick={() => navigate("/write")}>write</Button>
+        <Button onClick={() => navigate("/write")}>
+          <FontAwesomeIcon icon={faPen} />
+          write
+        </Button>
       )}
       {isAuthenticated() || (
         <Button onClick={() => navigate("/signup")}>
@@ -56,20 +65,28 @@ export function NavBar() {
       )}
       {isAdmin() && (
         <Button onClick={() => navigate("/member/list")}>
-          <FontAwesomeIcon icon={faList} />
+          <FontAwesomeIcon icon={faUsers} />
           회원목록
         </Button>
       )}
       {isAuthenticated() && (
         <Button onClick={() => navigate("/member?" + urlParams.toString())}>
-          <FontAwesomeIcon icon={faUsers} />
+          <FontAwesomeIcon icon={faUser} />
           회원정보
         </Button>
       )}
       {isAuthenticated() || (
-        <Button onClick={() => navigate("/login")}>로그인</Button>
+        <Button onClick={() => navigate("/login")}>
+          <FontAwesomeIcon icon={faRightToBracket} />
+          로그인
+        </Button>
       )}
-      {isAuthenticated() && <Button onClick={handleLogout}>로그아웃</Button>}
+      {isAuthenticated() && (
+        <Button onClick={handleLogout}>
+          <FontAwesomeIcon icon={faRightFromBracket} />
+          로그아웃
+        </Button>
+      )}
     </Flex>
   );
 }

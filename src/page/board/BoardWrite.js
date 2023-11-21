@@ -15,8 +15,8 @@ import { useNavigate } from "react-router-dom";
 export function BoardWrite() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadFiles, setUploadFiles] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -69,15 +69,18 @@ export function BoardWrite() {
           ></Textarea>
         </FormControl>
         <FormControl>
-          <FormLabel>IMAGE</FormLabel>
+          <FormLabel>이미지</FormLabel>
           <Input
             type="file"
             accept="image/*"
             multiple
             onChange={(e) => setUploadFiles(e.target.files)}
           />
-          <FormHelperText>1MB이내 파일만 가능, 총 50MB 첨부가능</FormHelperText>
+          <FormHelperText>
+            한 개 파일은 1MB 이내, 총 용량은 10MB 이내로 첨부하세요.
+          </FormHelperText>
         </FormControl>
+
         <Button
           isDisabled={isSubmitting}
           onClick={handleSubmit}

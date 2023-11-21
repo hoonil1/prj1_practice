@@ -23,11 +23,11 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { CommentContainer } from "../../component/CommentContainer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp as emptyHeart } from "@fortawesome/free-regular-svg-icons";
-import { faThumbsUp as fullHeart } from "@fortawesome/free-solid-svg-icons";
-import { LoginContext } from "../component/LoginProvider";
-import { CommentContainer } from "../component/CommentContainer";
+import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
+import { LoginContext } from "../../component/LoginProvider";
 
 function LikeContainer({ like, onClick }) {
   const { isAuthenticated } = useContext(LoginContext);

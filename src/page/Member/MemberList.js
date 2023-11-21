@@ -39,7 +39,7 @@ export function MemberList() {
           <Tr>
             <Th>id</Th>
             <Th>pw</Th>
-            <Th>nickname</Th>
+            <Th>별명</Th>
             <Th>email</Th>
             <Th>가입일시</Th>
           </Tr>
