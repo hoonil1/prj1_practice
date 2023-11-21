@@ -3,6 +3,7 @@ import {
   Button,
   FormControl,
   FormLabel,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -95,6 +96,14 @@ export function BoardEdit() {
             })
           }
         />
+      </FormControl>
+      <FormControl>
+        <FormLabel>파일</FormLabel>
+        {board.files.map((file) => (
+          <Box key={file.id} my="5px" border="3px solid black">
+            <Image width="50%" src={file.url} alt={file.name} />
+          </Box>
+        ))}
       </FormControl>
 
       <Button colorScheme="blue" onClick={onOpen}>
