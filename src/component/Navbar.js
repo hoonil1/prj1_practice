@@ -33,16 +33,6 @@ export function NavBar() {
     urlParams.set("id", login.id);
   }
 
-  function handleLogout() {
-    axios.post("/api/member/logout").then(() => {
-      toast({
-        description: "로그아웃 되었습니다.",
-        status: "info",
-      });
-      navigate("/");
-    });
-  }
-
   return (
     <Flex mb={10}>
       <Button
